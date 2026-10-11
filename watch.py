@@ -46,6 +46,21 @@ def prevent_overlay_accumulation(viewer):
     viewer._create_overlay = create_overlay
 
 
+def episode_summary(reward, steps, dt, start_x, end_x, terminated, truncated):
+    duration = steps * dt
+    distance = end_x - start_x
+    speed = distance / duration if duration else 0.0
+    reasons = []
+    if terminated:
+        reasons.append("fell / unhealthy posture")
+    if truncated:
+        reasons.append("time limit")
+    reason = " + ".join(reasons) or "interrupted"
+    return (f"Episode reward: {reward:.1f} | duration: {duration:.2f} s | "
+            f"forward distance: {distance:.2f} m | average speed: {speed:.2f} m/s | "
+            f"ended: {reason}")
+
+
 def main():
     if MODEL_PATH.exists():
         model = PPO.load(MODEL_PATH, device="cpu")
@@ -64,6 +79,8 @@ def main():
         prevent_overlay_accumulation(viewer)
         exit_handler = ViewerExit(viewer)
         episode_reward = 0.0
+        episode_steps = 0
+        start_x = float(info["x_position"])
 
         while not exit_handler.requested:
             renderer.render("human")
@@ -75,11 +92,15 @@ def main():
                 action, _ = model.predict(obs, deterministic=True)
             obs, reward, terminated, truncated, info = env.step(action)
             episode_reward += float(reward)
+            episode_steps += 1
 
             if terminated or truncated:
-                print(f"Episode reward: {episode_reward:.1f}")
+                print(episode_summary(episode_reward, episode_steps, env.unwrapped.dt,
+                                      start_x, float(info["x_position"]), terminated, truncated))
                 episode_reward = 0.0
                 obs, info = env.reset()
+                episode_steps = 0
+                start_x = float(info["x_position"])
 
     except KeyboardInterrupt:
         pass
