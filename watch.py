@@ -1,6 +1,7 @@
 from walking_env import MODEL_PATH, make_env
 from stable_baselines3 import PPO
 import glfw
+import mujoco
 
 
 class ViewerExit:
@@ -46,6 +47,39 @@ def prevent_overlay_accumulation(viewer):
     viewer._create_overlay = create_overlay
 
 
+class MouseCamera:
+    """Use current logical window coordinates across fullscreen/Retina changes."""
+
+    def __init__(self, viewer):
+        self.viewer = viewer
+        self.last = glfw.get_cursor_pos(viewer.window)
+        glfw.set_mouse_button_callback(viewer.window, self.on_button)
+        glfw.set_cursor_pos_callback(viewer.window, self.on_move)
+
+    def on_button(self, window, button, action, mods):
+        self.last = glfw.get_cursor_pos(window)
+
+    def on_move(self, window, x, y):
+        previous_x, previous_y = self.last
+        self.last = (x, y)
+        left = glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_LEFT) == glfw.PRESS
+        right = glfw.get_mouse_button(window, glfw.MOUSE_BUTTON_RIGHT) == glfw.PRESS
+        if not (left or right):
+            return
+        width, height = glfw.get_window_size(window)
+        if width <= 0 or height <= 0:
+            return
+        shift = (glfw.get_key(window, glfw.KEY_LEFT_SHIFT) == glfw.PRESS
+                 or glfw.get_key(window, glfw.KEY_RIGHT_SHIFT) == glfw.PRESS)
+        if right:
+            action = mujoco.mjtMouse.mjMOUSE_MOVE_H if shift else mujoco.mjtMouse.mjMOUSE_MOVE_V
+        else:
+            action = mujoco.mjtMouse.mjMOUSE_ROTATE_H if shift else mujoco.mjtMouse.mjMOUSE_ROTATE_V
+        self.viewer.cam.type = mujoco.mjtCamera.mjCAMERA_FREE
+        self.viewer.cam.fixedcamid = -1
+        self.viewer._move_camera(action, (x - previous_x) / width, (y - previous_y) / height)
+
+
 def episode_summary(reward, steps, dt, start_x, end_x, terminated, truncated):
     duration = steps * dt
     distance = end_x - start_x
@@ -77,6 +111,7 @@ def run_viewer(make_env, model_path, label, train_script):
         renderer = env.unwrapped.mujoco_renderer
         viewer = renderer._get_viewer("human")
         prevent_overlay_accumulation(viewer)
+        mouse_camera = MouseCamera(viewer)
         exit_handler = ViewerExit(viewer)
         episode_reward = 0.0
         episode_steps = 0
