@@ -8,7 +8,7 @@ Use the project virtual environment:
 .venv/bin/python -m unittest test_walking_env.py
 ```
 
-Training resumes `walker2d_both_legs_30kg_ankle10.zip` if present, otherwise starts a fresh PPO policy. Older checkpoints are preserved. The new policy has five extra observations for reward memory and cannot load the older checkpoint directly.
+Training resumes `walker2d_both_legs_30kg_torso15_ankle10.zip` if present, otherwise starts a fresh PPO policy. Older checkpoints are preserved. The new policy has five extra observations for reward memory and cannot load the older checkpoint directly.
 
 `walking_env.py` keeps Walker2d's forward movement, health, and control effort rewards, and adds:
 
@@ -27,4 +27,6 @@ Change the two foot motor `gear` values in `walker2d_separated.xml` to tune ankl
 
 ## Body weight
 
-Total body mass is approximately 30 kg (reduced from 35 kg; original mass was 23.7 kg). Uniform geometry density scaling preserves the existing segment mass proportions and scales inertia consistently. Gravity is explicitly set to 9.81 m/s² downward. This is a simulation tuning experiment, not a human anatomical mass distribution. Hip/knee and ankle torque limits remain 100 and 10 Nm. Training uses a separate checkpoint for this body. If a 35 kg checkpoint existed when this change was applied, it was copied to seed the 30 kg policy; otherwise training starts fresh. Increased mass reduces acceleration under the same motor torque, but does not change free-fall acceleration or guarantee a natural gait.
+Total body mass is 30 kg: torso 15 kg, each thigh 4 kg, each lower leg 2.5 kg, and each foot 1 kg. Explicit geometry masses replace the previous uniform-density distribution. MuJoCo infers each segment's inertia from its geometry and assigned mass. Gravity remains 9.81 m/s² downward; hip/knee and ankle torque limits remain 100 and 10 Nm. This is a simplified tuning experiment, not a calibrated human anatomical model.
+
+The torso-weighted body has its own checkpoint. If the previous 30 kg policy exists when this change is applied, it is copied to seed the new policy while preserving the original. Further training is needed to adapt to changed dynamics. Redistributing mass does not guarantee a natural gait.

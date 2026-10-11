@@ -1,9 +1,9 @@
 <mujoco model="walker2d">
   <compiler angle="degree" inertiafromgeom="true" />
-  <!-- Uniform density scaling raises total body mass from 23.7 kg to 30 kg. -->
+  <!-- Explicit segment masses total 30 kg; inertia is inferred from geometry. -->
   <default>
     <joint armature="0.01" damping=".1" limited="true" />
-    <geom conaffinity="0" condim="3" contype="1" density="1267.045105811815802" friction=".7 .1 .1" rgba="0.8 0.6 .4 1" />
+    <geom conaffinity="0" condim="3" contype="1" density="1000" friction=".7 .1 .1" rgba="0.8 0.6 .4 1" />
   </default>
   <option integrator="RK4" timestep="0.002" gravity="0 0 -9.81" />
   <worldbody>
@@ -14,29 +14,29 @@
       <joint armature="0" axis="1 0 0" damping="0" limited="false" name="rootx" pos="0 0 -1.25" stiffness="0" type="slide" />
       <joint armature="0" axis="0 0 1" damping="0" limited="false" name="rootz" pos="0 0 -1.25" ref="1.25" stiffness="0" type="slide" />
       <joint armature="0" axis="0 1 0" damping="0" limited="false" name="rooty" pos="0 0 0" stiffness="0" type="hinge" />
-      <geom friction="0.9" name="torso_geom" size="0.050000000000000003 0.19999999999999996" type="capsule" />
+      <geom friction="0.9" name="torso_geom" mass="15" size="0.050000000000000003 0.19999999999999996" type="capsule" />
       <body name="thigh" pos="0 -0.12 -0.19999999999999996">
         <joint axis="0 -1 0" name="thigh_joint" pos="0 0 0" range="-150 0" type="hinge" />
-        <geom friction="0.9" pos="0 0 -0.22500000000000009" name="thigh_geom" size="0.050000000000000003 0.22500000000000003" type="capsule" />
+        <geom friction="0.9" pos="0 0 -0.22500000000000009" name="thigh_geom" mass="4" size="0.050000000000000003 0.22500000000000003" type="capsule" />
         <body name="leg" pos="0 0 -0.70000000000000007">
           <joint axis="0 -1 0" name="leg_joint" pos="0 0 0.25" range="-150 0" type="hinge" />
-          <geom friction="0.9" name="leg_geom" size="0.040000000000000001 0.25" type="capsule" />
+          <geom friction="0.9" name="leg_geom" mass="2.5" size="0.040000000000000001 0.25" type="capsule" />
           <body name="foot" pos="0.20000000000000001 0 -0.34999999999999998">
             <joint axis="0 -1 0" name="foot_joint" pos="-0.20000000000000001 0 0.10000000000000001" range="-45 45" type="hinge" />
-            <geom friction="1.9" pos="-0.10000000000000001 0 0.10000000000000001" quat="0.70710678118654757 0 -0.70710678118654746 0" name="foot_geom" size="0.059999999999999998 0.10000000000000001" type="capsule" />
+            <geom friction="1.9" pos="-0.10000000000000001 0 0.10000000000000001" quat="0.70710678118654757 0 -0.70710678118654746 0" name="foot_geom" mass="1" size="0.059999999999999998 0.10000000000000001" type="capsule" />
           </body>
         </body>
       </body>
       
       <body name="thigh_left" pos="0 0.12 -0.19999999999999996">
         <joint axis="0 -1 0" name="thigh_left_joint" pos="0 0 0" range="-150 0" type="hinge" />
-        <geom friction="0.9" name="thigh_left_geom" rgba=".7 .3 .6 1" size="0.050000000000000003 0.22500000000000003" pos="0 0 -0.22500000000000009" type="capsule" />
+        <geom friction="0.9" name="thigh_left_geom" mass="4" rgba=".7 .3 .6 1" size="0.050000000000000003 0.22500000000000003" pos="0 0 -0.22500000000000009" type="capsule" />
         <body name="leg_left" pos="0 0 -0.70000000000000007">
           <joint axis="0 -1 0" name="leg_left_joint" pos="0 0 0.25" range="-150 0" type="hinge" />
-          <geom friction="0.9" name="leg_left_geom" rgba=".7 .3 .6 1" size="0.040000000000000001 0.25" type="capsule" />
+          <geom friction="0.9" name="leg_left_geom" mass="2.5" rgba=".7 .3 .6 1" size="0.040000000000000001 0.25" type="capsule" />
           <body name="foot_left" pos="0.20000000000000001 0 -0.34999999999999998">
             <joint axis="0 -1 0" name="foot_left_joint" pos="-0.20000000000000001 0 0.10000000000000001" range="-45 45" type="hinge" />
-            <geom friction="1.9" name="foot_left_geom" rgba=".7 .3 .6 1" size="0.059999999999999998 0.10000000000000001" pos="-0.10000000000000001 0 0.10000000000000001" type="capsule" quat="0.70710678118654757 0 -0.70710678118654746 0" />
+            <geom friction="1.9" name="foot_left_geom" mass="1" rgba=".7 .3 .6 1" size="0.059999999999999998 0.10000000000000001" pos="-0.10000000000000001 0 0.10000000000000001" type="capsule" quat="0.70710678118654757 0 -0.70710678118654746 0" />
           </body>
         </body>
       </body>

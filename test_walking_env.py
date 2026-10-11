@@ -37,6 +37,11 @@ class BothLegsTests(unittest.TestCase):
         self.assertAlmostEqual(float(model.body_mass.sum()), 30.0, places=3)
         np.testing.assert_allclose(model.opt.gravity, [0, 0, -9.81])
         self.assertTrue(np.all(model.body_inertia[1:] > 0))
+        expected = {"torso": 15, "thigh": 4, "thigh_left": 4,
+                    "leg": 2.5, "leg_left": 2.5, "foot": 1, "foot_left": 1}
+        for name, mass in expected.items():
+            body = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, name)
+            self.assertAlmostEqual(float(model.body_mass[body]), mass)
 
     def test_joint_torque_limits(self):
         base = self.env.unwrapped
