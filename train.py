@@ -1,14 +1,20 @@
-from pathlib import Path
+import argparse
 
-import gymnasium as gym
+from walking_env import MODEL_PATH, make_env
 from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
 
-MODEL_PATH = Path(__file__).resolve().parent / "walker2d_separated.zip"
+
 
 
 def main():
-    env = Monitor(gym.make("Walker2d-v5", xml_file=str(Path(__file__).resolve().parent / "walker2d_separated.xml")))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--timesteps", type=int, default=1_000_000)
+    args = parser.parse_args()
+    if args.timesteps <= 0:
+        parser.error("--timesteps must be positive")
+    env = Monitor(make_env(), filename="both_legs.monitor.csv",
+                  info_keywords=("reward_support_switch", "reward_unused_leg"))
 
     try:
         if MODEL_PATH.exists():
@@ -24,7 +30,7 @@ def main():
             )
 
         model.learn(
-            total_timesteps=1_000_000,
+            total_timesteps=args.timesteps,
             reset_num_timesteps=False,
         )
         model.save(MODEL_PATH)

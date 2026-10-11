@@ -1,9 +1,7 @@
-from pathlib import Path
-
-import gymnasium as gym
+from walking_env import MODEL_PATH, make_env
 from stable_baselines3 import PPO
 
-MODEL_PATH = Path(__file__).resolve().parent / "walker2d_separated.zip"
+
 
 
 def main():
@@ -14,7 +12,7 @@ def main():
         print("No trained Walker2d model yet. Showing an untrained two-leg preview.")
         print("Run python train.py to train it to walk.")
 
-    env = gym.make("Walker2d-v5", xml_file=str(Path(__file__).resolve().parent / "walker2d_separated.xml"), render_mode="human", camera_id=-1, default_camera_config={"azimuth": 135, "elevation": -15, "distance": 4.0})
+    env = make_env(render_mode="human", camera_id=-1, default_camera_config={"azimuth": 135, "elevation": -15, "distance": 4.0})
 
     try:
         obs, info = env.reset()
