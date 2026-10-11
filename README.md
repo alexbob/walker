@@ -98,3 +98,29 @@ Start with 4–8 workers, within your CPU core count. To compare CPU performance
 `--n-steps` is the rollout length per worker; total rollout size is `n-steps * n-envs`. Batch size must evenly divide that total. `--timesteps` counts combined steps across all workers, not steps per worker. `--torch-threads` defaults to 1 to limit CPU contention. Workers use Windows-compatible `spawn` under a main guard. Run the scripts from a terminal rather than executing them inside a notebook.
 
 Existing policies resume on the chosen device with the requested rollout and batch settings. Use `--model-path experiment.zip` to start an independent experiment without overwriting the existing policy. `--save-every` defaults to 100000 total simulation steps; snapshots and worker logs are under `logs/<model-name>/`. Ctrl+C saves the current policy when the training loop catches the interrupt. Checkpoints omit unfinished rollout buffers and do not exactly reproduce the interrupted trajectory. Model and log files remain outside Git. No Windows/CUDA performance benchmark has been run on the macOS development machine.
+
+## Humanoid experiment
+
+Humanoid-v5 adds two articulated arms, two legs, a torso, and a head fixed to the torso. It has 17 controlled joints and uses a project-local `humanoid.xml`. The default body mass is about 42.1 kg. It keeps Gymnasium's default physics, joint limits, and rewards; the custom Walker2d mass distribution and both-leg reward are not applied.
+
+Train a fresh humanoid policy, or resume `humanoid_ppo.zip` if present:
+
+```sh
+.venv/bin/python train_humanoid.py --timesteps 1000000
+.venv/bin/python watch_humanoid.py
+```
+
+Windows CUDA example (after the Windows environment setup above):
+
+```powershell
+.\.venv\Scripts\python.exe train_humanoid.py --device cuda --n-envs 8 --n-steps 1024 --batch-size 512 --timesteps 1000000
+.\.venv\Scripts\python.exe watch_humanoid.py
+```
+
+The humanoid uses the same device selection, parallel workers, resume behavior, periodic checkpoints, viewer controls, and episode summaries as the other models. Before training, the viewer shows a zero-action preview. Existing biped and quadruped policies cannot be reused because the observation and action spaces differ. One million steps is an initial experiment, not a guarantee of stable walking; evaluate and continue training as needed. No full humanoid training run or Windows/CUDA benchmark has been performed.
+
+Validate the humanoid environment without opening a window:
+
+```sh
+.venv/bin/python -m unittest test_humanoid_env.py
+```
