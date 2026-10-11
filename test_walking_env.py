@@ -34,7 +34,7 @@ class BothLegsTests(unittest.TestCase):
 
     def test_body_weight_and_gravity(self):
         model = self.env.unwrapped.model
-        self.assertAlmostEqual(float(model.body_mass.sum()), 35.0, places=3)
+        self.assertAlmostEqual(float(model.body_mass.sum()), 30.0, places=3)
         np.testing.assert_allclose(model.opt.gravity, [0, 0, -9.81])
         self.assertTrue(np.all(model.body_inertia[1:] > 0))
 

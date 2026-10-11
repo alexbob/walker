@@ -6,7 +6,7 @@ import mujoco
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent
-MODEL_PATH = ROOT / "walker2d_both_legs_35kg_ankle10.zip"
+MODEL_PATH = ROOT / "walker2d_both_legs_30kg_ankle10.zip"
 
 
 class BothLegsReward(gym.Wrapper):

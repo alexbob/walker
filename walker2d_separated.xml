@@ -1,9 +1,9 @@
 <mujoco model="walker2d">
   <compiler angle="degree" inertiafromgeom="true" />
-  <!-- Uniform density scaling raises total body mass from 23.7 kg to 35 kg. -->
+  <!-- Uniform density scaling raises total body mass from 23.7 kg to 30 kg. -->
   <default>
     <joint armature="0.01" damping=".1" limited="true" />
-    <geom conaffinity="0" condim="3" contype="1" density="1478.219290113785" friction=".7 .1 .1" rgba="0.8 0.6 .4 1" />
+    <geom conaffinity="0" condim="3" contype="1" density="1267.045105811815802" friction=".7 .1 .1" rgba="0.8 0.6 .4 1" />
   </default>
   <option integrator="RK4" timestep="0.002" gravity="0 0 -9.81" />
   <worldbody>
