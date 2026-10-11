@@ -30,3 +30,12 @@ Change the two foot motor `gear` values in `walker2d_separated.xml` to tune ankl
 Total body mass is 30 kg: torso 15 kg, each thigh 4 kg, each lower leg 2.5 kg, and each foot 1 kg. Explicit geometry masses replace the previous uniform-density distribution. MuJoCo infers each segment's inertia from its geometry and assigned mass. Gravity remains 9.81 m/s² downward; hip/knee and ankle torque limits remain 100 and 10 Nm. This is a simplified tuning experiment, not a calibrated human anatomical model.
 
 The torso-weighted body has its own checkpoint. If the previous 30 kg policy exists when this change is applied, it is copied to seed the new policy while preserving the original. Further training is needed to adapt to changed dynamics. Redistributing mass does not guarantee a natural gait.
+
+## Four-legged experiment
+
+```sh
+.venv/bin/python train_quadruped.py --timesteps 1000000
+.venv/bin/python watch_quadruped.py
+```
+
+Independent Ant-v5 baseline: four articulated legs, eight joint motors, free 3D torso, local `quadruped.xml`, and separate `quadruped_ant.zip`. A fresh policy is required because action and observation spaces differ from Walker2d. Ant's default rewards encourage forward movement and health and penalize effort and contact forces. No custom four-leg gait reward is included. The body uses original Ant masses (about 0.91 kg), not the biped's 30 kg mass or ankle limits. Those need separate tuning for this body. Both viewers share pause, exit, overlay fixes, and episode statistics. Before training, the quadruped viewer shows zero actions.

@@ -61,13 +61,13 @@ def episode_summary(reward, steps, dt, start_x, end_x, terminated, truncated):
             f"ended: {reason}")
 
 
-def main():
-    if MODEL_PATH.exists():
-        model = PPO.load(MODEL_PATH, device="cpu")
+def run_viewer(make_env, model_path, label, train_script):
+    if model_path.exists():
+        model = PPO.load(model_path, device="cpu")
     else:
         model = None
-        print("No trained Walker2d model yet. Showing an untrained two-leg preview.")
-        print("Run python train.py to train it to walk.")
+        print(f"No trained {label} model yet. Showing a zero-action preview.")
+        print(f"Run python {train_script} to train it to walk.")
 
     env = make_env(render_mode=None, camera_id=-1, default_camera_config={"azimuth": 135, "elevation": -15, "distance": 4.0})
 
@@ -106,6 +106,10 @@ def main():
         pass
     finally:
         env.close()
+
+
+def main():
+    run_viewer(make_env, MODEL_PATH, "Walker2d", "train.py")
 
 
 if __name__ == "__main__":
