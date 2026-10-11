@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import mujoco
 from stable_baselines3 import PPO
 from stable_baselines3.common.env_checker import check_env
 from walking_env import make_env
@@ -30,6 +31,18 @@ class BothLegsTests(unittest.TestCase):
         self.assertAlmostEqual(self.hold([False, True])[0], 0.5)
         self.assertEqual(self.hold([True, False], velocity=0)[0], 0)
         self.assertEqual(self.hold([True, True])[0], 0)
+
+    def test_joint_torque_limits(self):
+        base = self.env.unwrapped
+        expected = np.array([100, 100, 20, 100, 100, 20])
+        np.testing.assert_allclose(base.model.actuator_gear[:, 0], expected)
+        # Exceed normalized action limits to verify MuJoCo clamps motor torque.
+        for sign in (-1, 1):
+            base.data.ctrl[:] = sign * 2.0
+            mujoco.mj_forward(base.model, base.data)
+            joint_ids = base.model.actuator_trnid[:, 0]
+            dofs = base.model.jnt_dofadr[joint_ids]
+            np.testing.assert_allclose(base.data.qfrc_actuator[dofs], sign * expected)
 
     def test_reset_and_ppo(self):
         check_env(self.env)

@@ -41,14 +41,16 @@
       </body>
     </body>
   </worldbody>
+  <!-- Normalized actions: hips/knees +/-100 Nm, ankles +/-20 Nm.
+       Ankle strength is a tunable simulation constraint, not human calibration. -->
   <actuator>
     
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="100" joint="thigh_joint" />
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="100" joint="leg_joint" />
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="100" joint="foot_joint" />
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="20" joint="foot_joint" />
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="100" joint="thigh_left_joint" />
     <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="100" joint="leg_left_joint" />
-    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="100" joint="foot_left_joint" />
+    <motor ctrllimited="true" ctrlrange="-1.0 1.0" gear="20" joint="foot_left_joint" />
     
   </actuator>
     <asset>
