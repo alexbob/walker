@@ -1,5 +1,17 @@
 # Two-legged walker
 
+## Environment setup
+
+Use Python 3.12. From the project directory, create a virtual environment and install the pinned dependencies:
+
+```sh
+python3.12 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r requirements.txt
+```
+
+The versions match the existing development environment. Opening a viewer requires a graphical desktop with OpenGL support.
+
 Use the project virtual environment:
 
 ```sh
