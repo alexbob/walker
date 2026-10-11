@@ -31,6 +31,21 @@ class ViewerExit:
         self.request()
 
 
+def prevent_overlay_accumulation(viewer):
+    """Rebuild overlays for each redraw, including redraws while paused.
+
+    Installed Gymnasium appends text on each paused redraw but only clears
+    overlays after render() returns. Keep this workaround local to our viewer.
+    """
+    original_create_overlay = viewer._create_overlay
+
+    def create_overlay():
+        viewer._overlays.clear()
+        original_create_overlay()
+
+    viewer._create_overlay = create_overlay
+
+
 def main():
     if MODEL_PATH.exists():
         model = PPO.load(MODEL_PATH, device="cpu")
@@ -46,6 +61,7 @@ def main():
         # Render explicitly so simulation stops before any further render/reset.
         renderer = env.unwrapped.mujoco_renderer
         viewer = renderer._get_viewer("human")
+        prevent_overlay_accumulation(viewer)
         exit_handler = ViewerExit(viewer)
         episode_reward = 0.0
 
