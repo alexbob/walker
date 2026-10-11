@@ -21,6 +21,6 @@ The viewer uses the same reward wrapper and observation shape as training. `both
 
 ## Joint strength limits
 
-The XML caps commanded motor torque at +/-100 Nm for hips and knees and +/-20 Nm for ankles, using normalized controls in [-1, 1] and motor gears of 100 and 20. This is a deliberately weaker ankle setting, not a calibrated human muscle model. There are no separate toe joints, muscle fatigue, or muscle force-length/velocity dynamics. Passive forces and contact forces are not capped by the motor torque limit.
+The XML caps commanded motor torque at +/-100 Nm for hips and knees and +/-10 Nm for ankles, using normalized controls in [-1, 1] and motor gears of 100 and 10. This is a deliberately weaker ankle setting, not a calibrated human muscle model. There are no separate toe joints, muscle fatigue, or muscle force-length/velocity dynamics. Passive forces and contact forces are not capped by the motor torque limit.
 
 Change the two foot motor `gear` values in `walker2d_separated.xml` to tune ankle strength. Training and viewing share this XML. A separate checkpoint starts training fresh for the changed dynamics and preserves previous policies. Reduced ankle torque limits ankle-driven propulsion but does not guarantee that hopping disappears.

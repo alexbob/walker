@@ -34,7 +34,7 @@ class BothLegsTests(unittest.TestCase):
 
     def test_joint_torque_limits(self):
         base = self.env.unwrapped
-        expected = np.array([100, 100, 20, 100, 100, 20])
+        expected = np.array([100, 100, 10, 100, 100, 10])
         np.testing.assert_allclose(base.model.actuator_gear[:, 0], expected)
         # Exceed normalized action limits to verify MuJoCo clamps motor torque.
         for sign in (-1, 1):
