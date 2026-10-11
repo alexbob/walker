@@ -6,3 +6,4 @@ data
 _stable_baselines3_version
 system_info.txt
 *.monitor.csv
+logs/
