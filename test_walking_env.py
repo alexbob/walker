@@ -32,6 +32,12 @@ class BothLegsTests(unittest.TestCase):
         self.assertEqual(self.hold([True, False], velocity=0)[0], 0)
         self.assertEqual(self.hold([True, True])[0], 0)
 
+    def test_body_weight_and_gravity(self):
+        model = self.env.unwrapped.model
+        self.assertAlmostEqual(float(model.body_mass.sum()), 35.0, places=3)
+        np.testing.assert_allclose(model.opt.gravity, [0, 0, -9.81])
+        self.assertTrue(np.all(model.body_inertia[1:] > 0))
+
     def test_joint_torque_limits(self):
         base = self.env.unwrapped
         expected = np.array([100, 100, 10, 100, 100, 10])
